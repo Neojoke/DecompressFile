@@ -2,7 +2,6 @@
 import sys
 import argparse as apa
 import os
-parser = apa.ArgumentParser()
 
 
 class Compressor():
@@ -13,10 +12,25 @@ class Compressor():
     def config_parser(self):
         self._parser.add_argument('src',
                                   default='./',
+                                  help='要解压缩的文件所在目录的路径'
+                                  )
+        self._parser.add_argument('--expression', '-e',
+                                  help='压缩文件文件匹配的表达式', nargs='*'
                                   )
 
     def parse_args(self):
-        self._parser.parse_args()
+        if len(sys.argv) == 1:
+            sys.argv.append("--help")
+        self._args = self._parser.parse_args()
+        return self._args
+
+    @property
+    def args(self):
+        return self._args
+
+    @args.setter
+    def args(self, value):
+        self._args = value
 
     @property
     def parser(self):
@@ -27,16 +41,6 @@ class Compressor():
         self._parser = value
 
 
-if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        sys.argv.append("--help")
-    parser.add_argument("echo",
-                        help='echo the string you user here'
-                        )
-    parser.add_argument("--verbosity", metavar='1',
-                        help='increase output verbosity'
-                        )
-    args = parser.parse_args()
-    print(args.echo)
-    if args.verbosity:
-        print('verbosity turn on')
+compressor = Compressor()
+args = compressor.parse_args()
+print("expression : %s , \n src : %s" % (args.expression, args.src))
